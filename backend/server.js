@@ -13,21 +13,22 @@ app.get('/', (req, res) => {
   res.status(200).send('Server berjalan');
 });
 
+// Impor dan gunakan Rute
 const todoRoutes = require('./routes/todo');
+const authRoutes = require('./routes/auth');
+
 app.use('/api/todos', todoRoutes);
+app.use('/api/auth', authRoutes);
 
 const startServer = () => {
-
   mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
-
       app.listen(PORT, () => {
         console.log(`Server berjalan di: http://localhost:${PORT}`);
         console.log("Terhubung ke MongoDB.");
       });
     })
     .catch(err => {
-
       console.error("Server error: Tidak dapat terhubung ke MongoDB.");
       console.error("Detail Error:", err.message); 
       process.exit(1);
@@ -35,4 +36,3 @@ const startServer = () => {
 };
 
 startServer();
-
