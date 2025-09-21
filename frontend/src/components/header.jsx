@@ -20,7 +20,7 @@ const Header = () => {
         {token && (
            <div className="flex items-center space-x-4">
            <span className="hidden sm:block">Halo, {name}!</span>
-           <Button onClick={handleLogout} secondary>
+           <Button onClick={handleLogout} variant="danger">
              Logout
            </Button>
          </div>

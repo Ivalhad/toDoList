@@ -14,18 +14,15 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
     setEditedItems(newItems);
   };
 
-  // BARU: Fungsi untuk menambah item baru saat edit
   const handleAddNewItem = () => {
     setEditedItems([...editedItems, { text: '', completed: false }]);
   };
 
-  // BARU: Fungsi untuk menghapus item saat edit
   const handleDeleteItem = (indexToDelete) => {
     setEditedItems(editedItems.filter((_, index) => index !== indexToDelete));
   };
 
   const handleSaveChanges = () => {
-    // Filter item yang kosong agar tidak tersimpan
     const finalItems = editedItems.filter(item => item.text.trim() !== '');
     onUpdate(todo._id, { ...todo, title: editedTitle, items: finalItems });
     setIsEditing(false);
@@ -47,13 +44,12 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
       {isEditing ? (
-        // TAMPILAN MODE EDIT
         <div className="space-y-4">
           <Input
             value={editedTitle}
             onChange={(e) => setEditedTitle(e.target.value)}
             placeholder="Edit Judul Utama"
-            className="font-bold text-lg" // BARU: Judul dibuat tebal
+            className="font-bold text-lg"
           />
           <div className="space-y-2">
             {editedItems.map((item, index) => (
@@ -61,10 +57,9 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
                 <Input
                   value={item.text}
                   onChange={(e) => handleItemTextChange(index, e.target.value)}
-                  placeholder={`Sub tugas...`}
+                  placeholder={`Edit sub-tugas...`}
                 />
-                {/*Tombol hapus sub-item */}
-                <button 
+                <button
                   onClick={() => handleDeleteItem(index)}
                   className="text-red-500 hover:text-red-700 font-bold text-xl"
                 >
@@ -73,21 +68,19 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
               </div>
             ))}
           </div>
-           {/* BARU: Tombol untuk menambah item */}
-          <Button onClick={handleAddNewItem} type="button" fullWidth secondary>+ Tambah Item</Button>
+          <Button onClick={handleAddNewItem} type="button" fullWidth variant="secondary">+ Tambah Item</Button>
           <div className="flex gap-2 justify-end mt-4">
-            <Button onClick={handleCancelEdit} secondary>Batal</Button>
+            <Button onClick={handleCancelEdit} variant="danger">Batal</Button>
             <Button onClick={handleSaveChanges}>Simpan</Button>
           </div>
         </div>
       ) : (
-        // TAMPILAN MODE LIHAT
         <div>
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-xl font-bold text-gray-800">{todo.title}</h3>
             <div className="flex gap-2">
               <Button onClick={() => setIsEditing(true)}>Edit</Button>
-              <Button onClick={() => onDelete(todo._id)} secondary>
+              <Button onClick={() => onDelete(todo._id)} variant="danger">
                 Hapus
               </Button>
             </div>

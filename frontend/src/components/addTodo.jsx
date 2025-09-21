@@ -32,14 +32,7 @@ const AddTodo = ({ onAdd }) => {
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          type="text"
-          placeholder="Judul Utama To-Do..."
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-
-        {/* Form untuk menambah sub-item */}
+        {/* ... */}
         <div className="flex gap-2">
           <Input
             type="text"
@@ -47,7 +40,7 @@ const AddTodo = ({ onAdd }) => {
             value={currentItemText}
             onChange={(e) => setCurrentItemText(e.target.value)}
           />
-          <Button type="button" onClick={handleAddItem} secondary>
+          <Button type="button" onClick={handleAddItem} variant="danger">
             +
           </Button>
         </div>
