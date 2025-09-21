@@ -17,8 +17,8 @@ app.get('/', (req, res) => {
 const todoRoutes = require('./routes/todo');
 const authRoutes = require('./routes/auth');
 
-app.use('/api/todos', todoRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/todo', todoRoutes);
+app.use('/auth', authRoutes);
 
 const startServer = () => {
   mongoose.connect(process.env.MONGODB_URI)
