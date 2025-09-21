@@ -26,7 +26,7 @@ const LoginPage = () => {
         <AuthForm onSubmit={handleLogin} />
         <p className="mt-6 text-center text-gray-600">
           Belum punya akun?{' '}
-          <Link to="/register" className="text-primary hover:underline">
+          <Link to="/register" className="font-medium text-blue-500 hover:underline">
             Daftar di sini
           </Link>
         </p>
