@@ -1,63 +1,80 @@
 const express = require('express');
 const router = express.Router();
-const Todo = require('../models/todo'); // Impor model Todo
+const Todo = require('../models/todo');
+const { protect } = require('../middleware/authMiddleware');
 
-// --- RUTE API ---
 
-// GET: Mendapatkan semua to-do
+router.use(protect);
+
+
 router.get('/', async (req, res) => {
   try {
-    const todos = await Todo.find();
+
+    const todos = await Todo.find({ user: req.user._id });
     res.json(todos);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
   }
 });
 
-// POST: Membuat to-do baru
 router.post('/', async (req, res) => {
-  const todo = new Todo({
-    text: req.body.text,
-  });
-
+  if (!req.body.text) {
+    return res.status(400).json({ message: "Teks tidak boleh kosong" });
+  }
+  
   try {
-    const newTodo = await todo.save();
-    res.status(201).json(newTodo);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    const newTodo = new Todo({
+      text: req.body.text,
+      user: req.user._id 
+    });
+    const savedTodo = await newTodo.save();
+    res.status(201).json(savedTodo);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
   }
 });
 
-// PUT: Mengubah to-do (misal: menandai selesai)
 router.put('/:id', async (req, res) => {
   try {
     const todo = await Todo.findById(req.params.id);
+
     if (!todo) {
-      return res.status(404).json({ message: 'Todo not found' });
+      return res.status(404).json({ message: 'To-do tidak ditemukan' });
+    }
+
+    if (todo.user.toString() !== req.user._id.toString()) {
+      return res.status(401).json({ message: 'Akses tidak diizinkan' });
     }
     
-    // Update properti completed
-    todo.completed = req.body.completed;
+    todo.completed = req.body.completed ?? todo.completed;
+    todo.text = req.body.text ?? todo.text;
+
     const updatedTodo = await todo.save();
     res.json(updatedTodo);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
   }
 });
 
-// DELETE: Menghapus to-do
 router.delete('/:id', async (req, res) => {
   try {
     const todo = await Todo.findById(req.params.id);
+
     if (!todo) {
-      return res.status(404).json({ message: 'Todo not found' });
+      return res.status(404).json({ message: 'To-do tidak ditemukan' });
     }
     
+    // 6. Pastikan user yang login adalah pemilik to-do
+    if (todo.user.toString() !== req.user._id.toString()) {
+      return res.status(401).json({ message: 'Akses tidak diizinkan' });
+    }
+
     await todo.deleteOne();
-    res.json({ message: 'Todo deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.json({ message: 'To-do berhasil dihapus' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
   }
 });
+
 
 module.exports = router;
