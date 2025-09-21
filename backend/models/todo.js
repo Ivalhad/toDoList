@@ -1,22 +1,36 @@
 const mongoose = require('mongoose');
 
-const todoSchema = new mongoose.Schema({
-
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'User' 
-  },
+const itemSchema = new mongoose.Schema({
   text: {
     type: String,
-    required: [true, "Teks tidak boleh kosong"]
+    required: true,
   },
   completed: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
+});
+
+const todoSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
+  },
+
+  title: {
+    type: String,
+    required: [true, "Judul tidak boleh kosong"],
+    trim: true,
+  },
+
+  deadline: {
+    type: Date,
+  },
+
+  items: [itemSchema],
 }, {
-  timestamps: true 
+  timestamps: true,
 });
 
 const Todo = mongoose.model('Todo', todoSchema);
