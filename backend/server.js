@@ -1,27 +1,38 @@
-// 1. Impor paket yang diperlukan
-require('dotenv').config(); // Untuk memuat variabel dari .env
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-// 2. Inisialisasi aplikasi Express
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 3. Gunakan Middleware
-app.use(cors()); // Mengizinkan akses dari origin yang berbeda
-app.use(express.json()); // Mem-parsing body request sebagai JSON
+app.use(cors());
+app.use(express.json());
 
-// 4. Koneksi ke MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Successfully connected to MongoDB!'))
-  .catch(err => console.error('Connection error:', err));
-
-// 5. Gunakan Rute API
-const todoRoutes = require('./routes/todo');
-app.use('/api/todos', todoRoutes); // Semua rute di todos.js akan diawali dengan /api/todos
-
-// 6. Jalankan Server
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
+app.get('/', (req, res) => {
+  res.status(200).send('Server berjalan');
 });
+
+const todoRoutes = require('./routes/todo');
+app.use('/api/todos', todoRoutes);
+
+const startServer = () => {
+
+  mongoose.connect(process.env.MONGODB_URI)
+    .then(() => {
+
+      app.listen(PORT, () => {
+        console.log(`Server berjalan di: http://localhost:${PORT}`);
+        console.log("Terhubung ke MongoDB.");
+      });
+    })
+    .catch(err => {
+
+      console.error("Server error: Tidak dapat terhubung ke MongoDB.");
+      console.error("Detail Error:", err.message); 
+      process.exit(1);
+    });
+};
+
+startServer();
+
